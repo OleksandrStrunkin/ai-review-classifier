@@ -1,7 +1,7 @@
-
 import React from "react";
 import SentimentChart from "./charts/SentimentChart";
 import TopicChart from "./charts/TopicChart";
+import ReviewTable from "./ReviewTable";
 
 /**
  * Головна панель для відображення результатів аналізу.
@@ -13,7 +13,7 @@ export default function ResultsDashboard({ results }) {
     return null;
   }
 
-  const { totalReviews, sentimentData, topicData } = results;
+  const { totalReviews, sentimentData, topicData, analyzedReviews } = results;
   const positiveReviews =
     sentimentData.find((d) => d.label === "Позитивні")?.value || 0;
   const negativeReviews =
@@ -30,19 +30,19 @@ export default function ResultsDashboard({ results }) {
           title="Всього відгуків"
           value={totalReviews}
           icon="📝"
-          bgColor="bg-indigo-100 dark:bg-indigo-900"
+          bgColor="bg-indigo-100/80 dark:bg-indigo-900/80"
         />
         <KPICard
           title="Позитивних"
           value={`${positivePercent}%`}
           icon="👍"
-          bgColor="bg-emerald-100 dark:bg-emerald-900"
+          bgColor="bg-emerald-100/80 dark:bg-emerald-900/80"
         />
         <KPICard
           title="Негативних"
           value={`${negativePercent}%`}
           icon="👎"
-          bgColor="bg-red-100 dark:bg-red-900"
+          bgColor="bg-red-100/80 dark:bg-red-900/80"
         />
       </div>
 
@@ -72,10 +72,7 @@ export default function ResultsDashboard({ results }) {
         <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
           Приклади проаналізованих відгуків
         </h3>
-        <p className="text-gray-500 dark:text-gray-400">
-          *(Тут буде таблиця з оригінальним текстом, настроєм та темою, коли ми
-          отримаємо реальні результати від API.)*
-        </p>
+        <ReviewTable reviews={analyzedReviews} />
       </div>
     </div>
   );
@@ -84,11 +81,11 @@ export default function ResultsDashboard({ results }) {
 // Допоміжний компонент для відображення ключових показників
 const KPICard = ({ title, value, icon, bgColor }) => (
   <div className={`p-4 rounded-xl shadow-md ${bgColor} dark:text-gray-900`}>
-    <div className="text-3xl mb-1">{icon}</div>
-    <div className="text-sm font-medium text-gray-600 dark:text-gray-900">
-      {title}
+    <div className="text-sm mb-3 font-medium text-gray-600 dark:text-gray-50/80">
+      <span className="text-3xl mb-1">{icon}</span>
+      <span>{title}</span>
     </div>
-    <div className="text-2xl font-bold mt-1 text-gray-800 dark:text-gray-900">
+    <div className="text-2xl text-center font-bold mt-1 text-gray-800 dark:text-gray-50/80">
       {value}
     </div>
   </div>

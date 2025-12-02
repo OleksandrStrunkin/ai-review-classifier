@@ -34,7 +34,7 @@ export default function UploadArea({ onAnalyze, isLoading }) {
   return (
     <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 space-y-4">
       {/* 1. Поле для завантаження файлу */}
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
         Виберіть CSV-файл із відгуками
       </label>
       <input
@@ -45,8 +45,10 @@ export default function UploadArea({ onAnalyze, isLoading }) {
                     file:mr-4 file:py-2 file:px-4
                     file:rounded-full file:border-0
                     file:text-sm file:font-semibold
-                    file:bg-indigo-50 file:text-indigo-700
-                    hover:file:bg-indigo-100 dark:file:bg-indigo-900 dark:file:text-indigo-300
+                    file:bg-indigo-150 file:text-indigo-900
+                    hover:file:bg-indigo-400/50 dark:file:bg-indigo-900
+                    dark:file:text-indigo-300 file:duration-300 cursor-pointer
+                    file:cursor-pointer
                 "
       />
 
