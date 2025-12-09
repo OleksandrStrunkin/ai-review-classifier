@@ -30,27 +30,30 @@ export default function ResultsDashboard({ results }) {
           title="Всього відгуків"
           value={totalReviews}
           icon="📝"
-          bgColor="bg-indigo-100/80 dark:bg-indigo-900/80"
+          // Тільки темний фон, без dark: префіксів
+          bgColor="bg-indigo-900/50 border border-indigo-700"
         />
         <KPICard
           title="Позитивних"
           value={`${positivePercent}%`}
           icon="👍"
-          bgColor="bg-emerald-100/80 dark:bg-emerald-900/80"
+          // Тільки темний фон, без dark: префіксів
+          bgColor="bg-emerald-900/50 border border-emerald-700"
         />
         <KPICard
           title="Негативних"
           value={`${negativePercent}%`}
           icon="👎"
-          bgColor="bg-red-100/80 dark:bg-red-900/80"
+          // Тільки темний фон, без dark: префіксів
+          bgColor="bg-red-900/50 border border-red-700"
         />
       </div>
 
       {/* Секція 2: Графіки візуалізації */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Графік 1: Класифікація настроїв (Кругова діаграма) */}
-        <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+        <div className="p-6 bg-gray-800 rounded-xl shadow-2xl shadow-gray-900/50 border border-gray-700">
+          <h3 className="text-xl font-semibold mb-6 text-gray-100">
             Розподіл настроїв
           </h3>
           {/* Передаємо дані у компонент SentimentChart */}
@@ -58,8 +61,8 @@ export default function ResultsDashboard({ results }) {
         </div>
 
         {/* Графік 2: Топ-теми скарг (Стовпчаста діаграма) */}
-        <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+        <div className="p-6 bg-gray-800 rounded-xl shadow-2xl shadow-gray-900/50 border border-gray-700">
+          <h3 className="text-xl font-semibold mb-6 text-gray-100">
             Топ-5 тем, згаданих у відгуках
           </h3>
           {/* Передаємо дані у компонент TopicChart */}
@@ -67,9 +70,9 @@ export default function ResultsDashboard({ results }) {
         </div>
       </div>
 
-      {/* Опціональна Секція 3: Приклади відгуків (заглушка) */}
-      <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-        <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+      {/* Секція 3: Приклади проаналізованих відгуків */}
+      <div className="p-6 bg-gray-800 rounded-xl shadow-2xl shadow-gray-900/50 border border-gray-700">
+        <h3 className="text-xl font-semibold mb-6 text-gray-100">
           Приклади проаналізованих відгуків
         </h3>
         <ReviewTable reviews={analyzedReviews} />
@@ -78,15 +81,14 @@ export default function ResultsDashboard({ results }) {
   );
 }
 
-// Допоміжний компонент для відображення ключових показників
+// Допоміжний компонент для відображення ключових показників (ОНОВЛЕНО)
 const KPICard = ({ title, value, icon, bgColor }) => (
-  <div className={`p-4 rounded-xl shadow-md ${bgColor} dark:text-gray-900`}>
-    <div className="text-sm mb-3 font-medium text-gray-600 dark:text-gray-50/80">
-      <span className="text-3xl mb-1">{icon}</span>
-      <span>{title}</span>
+  // Використовуємо bgColor тільки для фону та рамки, текст фіксований для темної теми
+  <div className={`p-4 rounded-xl shadow-md border ${bgColor}`}>
+    <div className="text-sm mb-1 font-medium text-gray-400">
+      <span className="text-3xl mr-2 align-middle">{icon}</span>
+      <span className="align-middle">{title}</span>
     </div>
-    <div className="text-2xl text-center font-bold mt-1 text-gray-800 dark:text-gray-50/80">
-      {value}
-    </div>
+    <div className="text-3xl font-extrabold mt-1 text-gray-50">{value}</div>
   </div>
 );

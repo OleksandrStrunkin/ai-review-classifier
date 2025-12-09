@@ -24,7 +24,7 @@ export default function SentimentChart({ data }) {
       legend: {
         position: "bottom",
         labels: {
-          color: "hsl(210 4% 46%)", // Колір тексту для Dark Mode
+          color: "#A0AEC0", // Колір тексту для Dark Mode
         },
       },
       tooltip: {

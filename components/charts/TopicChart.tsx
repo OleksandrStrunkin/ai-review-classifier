@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   Chart as ChartJS,
@@ -21,25 +20,31 @@ ChartJS.register(
 );
 
 export default function TopicChart({ data }) {
+  const INDIGO_COLOR = "rgba(109, 40, 217, 0.8)";
+  const INDIGO_BORDER = "rgba(109, 40, 217, 1)";
+  const TEXT_COLOR = "#A0AEC0";
+  const GRID_COLOR = "rgba(55, 65, 81, 0.5)";
+
   const chartData = {
     labels: data.map((d) => d.topic),
     datasets: [
       {
         label: "Кількість згадок",
         data: data.map((d) => d.count),
-        backgroundColor: "rgba(59, 130, 246, 0.7)", // blue-500
-        borderColor: "rgba(59, 130, 246, 1)",
+        backgroundColor: INDIGO_COLOR,
+        borderColor: INDIGO_BORDER,
         borderWidth: 1,
+        borderRadius: 4,
       },
     ],
   };
 
   const options = {
-    indexAxis: "y", // Робимо її горизонтальною
+    indexAxis: "y",
     responsive: true,
     plugins: {
       legend: {
-        display: false, // Не показуємо легенду для одного набору даних
+        display: false,
       },
       title: {
         display: false,
@@ -49,10 +54,14 @@ export default function TopicChart({ data }) {
       x: {
         beginAtZero: true,
         grid: {
-          color: "rgba(107, 114, 128, 0.2)", // Колір сітки для Dark Mode
+          color: GRID_COLOR,
+          borderColor: GRID_COLOR,
         },
         ticks: {
-          color: "hsl(210 4% 46%)", // Колір тексту
+          color: TEXT_COLOR,
+          font: {
+            family: "system-ui",
+          },
         },
       },
       y: {
@@ -60,7 +69,10 @@ export default function TopicChart({ data }) {
           display: false,
         },
         ticks: {
-          color: "hsl(210 4% 46%)", // Колір тексту
+          color: TEXT_COLOR,
+          font: {
+            family: "system-ui",
+          },
         },
       },
     },
@@ -68,7 +80,6 @@ export default function TopicChart({ data }) {
 
   return (
     <div className="h-64">
-      {/* Забезпечуємо фіксовану висоту */}
       <Bar data={chartData} options={options} />
     </div>
   );
