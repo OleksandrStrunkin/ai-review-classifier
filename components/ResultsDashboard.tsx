@@ -52,12 +52,10 @@ export default function ResultsDashboard({ results }) {
 
       {/* Секція 2: Графіки візуалізації */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        {/* Графік 1: Класифікація настроїв (Кругова діаграма) */}
-        <div className="p-6 bg-gray-800 rounded-xl shadow-2xl shadow-gray-900/50 border border-gray-700">
+        <div className="p-6 bg-gray-800 flex flex-col justify-center items-center rounded-xl shadow-2xl shadow-gray-900/50 border border-gray-700">
           <h3 className="text-xl font-semibold mb-6 text-gray-100">
             Розподіл настроїв
           </h3>
-          {/* Передаємо дані у компонент SentimentChart */}
           <SentimentChart data={sentimentData} />
         </div>
 
