@@ -9,10 +9,8 @@ function groupSentimentByMonth(reviews) {
   const monthlyData = {};
 
   reviews.forEach((review) => {
-    // Перевіряємо, чи є дата
     if (!review.review_date) return;
 
-    // Групуємо по місяцю і року. Наприклад, '2024-01'
     const monthKey = review.review_date.substring(0, 7);
     const sentiment = review.sentiment;
 
@@ -20,13 +18,11 @@ function groupSentimentByMonth(reviews) {
       monthlyData[monthKey] = { Positive: 0, Negative: 0, Neutral: 0 };
     }
 
-    // Збільшуємо лічильник
     if (monthlyData[monthKey][sentiment] !== undefined) {
       monthlyData[monthKey][sentiment]++;
     }
   });
 
-  // Перетворюємо об'єкт у масив, сортуємо за датою
   const chartFormat = Object.keys(monthlyData)
     .sort()
     .map((monthKey) => ({
@@ -37,7 +33,6 @@ function groupSentimentByMonth(reviews) {
   return chartFormat;
 }
 
-// ...
 
 export default function Home() {
   const [analysisResults, setAnalysisResults] = useState(null);
@@ -70,8 +65,6 @@ export default function Home() {
       const resultData = await response.json();
       const formattedResults = formatGeminiResults(resultData.data);
       const sentimentTimeline = groupSentimentByMonth(resultData.data);
-
-      // Встановлення результатів
       setAnalysisResults({
         ...formattedResults,
         sentimentTimeline: sentimentTimeline,
@@ -112,13 +105,9 @@ export default function Home() {
       } else {
         sentimentCounts["Error"]++;
       }
-
-      // Рахуємо теми
       const topic = review.topic || "Інше";
       topicCounts[topic] = (topicCounts[topic] || 0) + 1;
     });
-
-    // Перетворюємо лічильники настроїв у формат для кругової діаграми
     const sentimentData = [
       {
         label: "Позитивні",
@@ -138,7 +127,6 @@ export default function Home() {
       { label: "Помилка", value: sentimentCounts["Error"], color: "#9CA3AF" },
     ].filter((d) => d.value > 0);
 
-    // Перетворюємо лічильники тем у формат для стовпчастої діаграми
     const topicData = Object.keys(topicCounts)
       .map((topic) => ({ topic, count: topicCounts[topic] }))
       .sort((a, b) => b.count - a.count)
@@ -151,7 +139,6 @@ export default function Home() {
       analyzedReviews: rawReviews,
     };
   };
-  // *** КІНЕЦЬ ОНОВЛЕНОЇ ФУНКЦІЇ АНАЛІЗУ ***
 
   return (
     <div className="flex min-h-screen justify-center bg-gray-900">
@@ -167,6 +154,28 @@ export default function Home() {
           (позитивний/негативний), виділить ключові теми скарг та візуалізує
           результати.
         </p>
+
+        <div className="mb-8 p-4 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-400">
+          <p className="font-semibold text-gray-300 mb-2">
+            <span className="mr-2">💡</span>
+            Структура CSV-файлу:
+          </p>
+          <p>
+            Файл повинен містити заголовки:
+            <code className="bg-gray-700 text-indigo-300 p-1 rounded mx-1">
+              review_date
+            </code>
+            (YYYY-MM-DD),
+            <code className="bg-gray-700 text-indigo-300 p-1 rounded mx-1">
+              review_text
+            </code>
+            та
+            <code className="bg-gray-700 text-indigo-300 p-1 rounded mx-1">
+              review_id
+            </code>
+            .
+          </p>
+        </div>
 
         <div className="flex flex-col lg:flex-row gap-12">
           {/* ЛІВА КОЛОНКА: Завантаження та Керування */}

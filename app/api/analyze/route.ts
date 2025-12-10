@@ -6,8 +6,6 @@ const ai = new GoogleGenAI({});
 
 const MODEL_NAME = "gemini-2.5-flash";
 
-// JSON Schema для гарантування структурованої відповіді
-// Це необхідно, щоб ми могли безпечно розібрати відповідь за допомогою JSON.parse()
 const responseSchema = {
   type: "object",
   properties: {
@@ -37,7 +35,6 @@ export async function POST(request) {
   }
 
   try {
-    // Отримуємо форму (formData) із завантаженим файлом
     const formData = await request.formData();
     const file = formData.get("file");
 
@@ -51,11 +48,9 @@ export async function POST(request) {
       );
     }
 
-    // Перетворюємо файл на ArrayBuffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // 4. Парсинг CSV
     const reviews = await parseCsv(buffer);
 
     if (reviews.length === 0) {
@@ -70,15 +65,13 @@ export async function POST(request) {
       );
     }
 
-    // 5. Виклик Gemini API для кожного відгуку паралельно
     const analysisPromises = reviews.map((review) =>
       analyzeReviewWithGemini(review)
     );
 
-    // Чекаємо завершення всіх запитів
+
     const analyzedReviews = await Promise.all(analysisPromises);
 
-    // 6. Повертаємо загальний результат
     return new Response(
       JSON.stringify({
         message: "Аналіз успішно завершено",
@@ -112,7 +105,6 @@ function parseCsv(buffer) {
     Readable.from(buffer)
       .pipe(
         csv({
-          // Вказуємо trim: true, щоб обрізати пробіли в заголовках колонок
           trim: true,
           headers: true,
         })
@@ -120,17 +112,13 @@ function parseCsv(buffer) {
       .on("data", (data) => {
         let reviewText = "";
 
-        // 1. Спробуємо знайти за явною назвою
         reviewText = (data.review_text || data.text || "").trim();
 
-        // 2. Якщо не знайшли, спробуємо знайти найбільш ймовірну колонку
         if (!reviewText) {
           const keys = Object.keys(data);
-          // Вибираємо найдовший рядок, який не схожий на ID (зазвичай відгук найдовший)
           let bestMatch = "";
           keys.forEach((key) => {
             const value = (data[key] || "").trim();
-            // Умова: текст не є ID (занадто коротким) і не є заголовком
             if (
               value.length > bestMatch.length &&
               !key.toLowerCase().includes("id")
@@ -141,7 +129,6 @@ function parseCsv(buffer) {
           reviewText = bestMatch;
         }
 
-        // Фінальна перевірка, щоб виключити порожні або заголовки
         if (
           reviewText &&
           reviewText.length > 10 &&
@@ -163,7 +150,6 @@ function parseCsv(buffer) {
   });
 }
 
-// Допоміжна функція для виклику Gemini API
 async function analyzeReviewWithGemini(review) {
   try {
     const prompt = `Проаналізуй наступний відгук українською мовою: "${review.original_text}". Поверни лише JSON-об'єкт, який містить класифікацію настрою (Positive, Negative, Neutral) та основну тему, використовуючи лише терміни: Доставка, Якість, Ціна, Підтримка, Інше.`;
@@ -172,10 +158,9 @@ async function analyzeReviewWithGemini(review) {
       model: MODEL_NAME,
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       config: {
-        // Вмикаємо JSON Mode
         responseMimeType: "application/json",
         responseSchema: responseSchema,
-        temperature: 0.1, // Низька температура для більш передбачуваних класифікацій
+        temperature: 0.1,
       },
     });
 

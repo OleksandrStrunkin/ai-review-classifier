@@ -1,6 +1,3 @@
-// components/SentimentTimelineChart.js
-
-import React from "react";
 import {
   Chart as ChartJS,
   CategoryScale,

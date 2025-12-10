@@ -24,7 +24,7 @@ export default function SentimentChart({ data }) {
       legend: {
         position: "bottom",
         labels: {
-          color: "#A0AEC0", // Колір тексту для Dark Mode
+          color: "#A0AEC0",
         },
       },
       tooltip: {
@@ -34,7 +34,6 @@ export default function SentimentChart({ data }) {
             if (label) {
               label += ": ";
             }
-            // Додаємо відсоток до підказки
             const total = context.dataset.data.reduce((a, b) => a + b, 0);
             const value = context.parsed;
             const percentage = ((value / total) * 100).toFixed(1) + "%";
@@ -47,7 +46,6 @@ export default function SentimentChart({ data }) {
 
   return (
     <div className="h-64">
-      {/* Забезпечуємо фіксовану висоту для кращого відображення */}
       <Doughnut data={chartData} options={options} />
     </div>
   );
