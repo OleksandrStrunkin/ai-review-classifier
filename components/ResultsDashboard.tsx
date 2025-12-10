@@ -2,6 +2,7 @@ import React from "react";
 import SentimentChart from "./charts/SentimentChart";
 import TopicChart from "./charts/TopicChart";
 import ReviewTable from "./ReviewTable";
+import SentimentTimelineChart from "./charts/SentimentTimelineChart";
 
 /**
  * Головна панель для відображення результатів аналізу.
@@ -68,6 +69,12 @@ export default function ResultsDashboard({ results }) {
           {/* Передаємо дані у компонент TopicChart */}
           <TopicChart data={topicData} />
         </div>
+      </div>
+      <div className="p-6 bg-gray-800 rounded-xl shadow-2xl shadow-gray-900/50 border border-gray-700">
+        <h3 className="text-xl font-semibold mb-6 text-gray-100">
+          Динаміка настроїв з часом
+        </h3>
+        <SentimentTimelineChart data={results.sentimentTimeline} />
       </div>
 
       {/* Секція 3: Приклади проаналізованих відгуків */}

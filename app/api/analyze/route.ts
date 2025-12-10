@@ -2,12 +2,8 @@ import { GoogleGenAI } from "@google/genai";
 import csv from "csv-parser";
 import { Readable } from "stream";
 
-// 1. Ініціалізація Gemini
-// Ключ автоматично береться зі змінної оточення GEMINI_API_KEY
 const ai = new GoogleGenAI({});
 
-// 2. Визначення моделі та системної інструкції
-// Це надсилається моделі перед кожним запитом і каже їй, що робити.
 const MODEL_NAME = "gemini-2.5-flash";
 
 // JSON Schema для гарантування структурованої відповіді
@@ -28,9 +24,8 @@ const responseSchema = {
   required: ["sentiment", "topic"],
 };
 
-// 3. Основна функція обробки POST-запиту
 export async function POST(request) {
-  // Перевірка наявності ключа API
+
   if (!process.env.GEMINI_API_KEY) {
     return new Response(
       JSON.stringify({ error: "Gemini API Key не налаштовано." }),
@@ -184,18 +179,15 @@ async function analyzeReviewWithGemini(review) {
       },
     });
 
-    // Gemini повертає текст у JSON-форматі, який ми парсимо
     const analysis = JSON.parse(response.text);
 
-    // Повертаємо оригінальний відгук разом із результатами аналізу
     return {
       ...review,
+      review_date: review.review_date,
       sentiment: analysis.sentiment,
       topic: analysis.topic,
     };
   } catch (e) {
-    // У разі помилки (наприклад, недійсний JSON або помилка API),
-    // повертаємо безпечні значення, щоб не зупиняти весь процес
     console.error(
       `Помилка аналізу відгуку: ${review.original_text}`,
       e.message

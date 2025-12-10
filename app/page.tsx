@@ -5,6 +5,40 @@ import ResultsDashboard from "@/components/ResultsDashboard";
 import { useState } from "react";
 import { DUMMY_RESULTS_WITH_ANALYSIS } from "@/data/dummyResults";
 
+function groupSentimentByMonth(reviews) {
+  const monthlyData = {};
+
+  reviews.forEach((review) => {
+    // Перевіряємо, чи є дата
+    if (!review.review_date) return;
+
+    // Групуємо по місяцю і року. Наприклад, '2024-01'
+    const monthKey = review.review_date.substring(0, 7);
+    const sentiment = review.sentiment;
+
+    if (!monthlyData[monthKey]) {
+      monthlyData[monthKey] = { Positive: 0, Negative: 0, Neutral: 0 };
+    }
+
+    // Збільшуємо лічильник
+    if (monthlyData[monthKey][sentiment] !== undefined) {
+      monthlyData[monthKey][sentiment]++;
+    }
+  });
+
+  // Перетворюємо об'єкт у масив, сортуємо за датою
+  const chartFormat = Object.keys(monthlyData)
+    .sort()
+    .map((monthKey) => ({
+      month: monthKey,
+      ...monthlyData[monthKey],
+    }));
+
+  return chartFormat;
+}
+
+// ...
+
 export default function Home() {
   const [analysisResults, setAnalysisResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,9 +69,13 @@ export default function Home() {
       }
       const resultData = await response.json();
       const formattedResults = formatGeminiResults(resultData.data);
+      const sentimentTimeline = groupSentimentByMonth(resultData.data);
 
       // Встановлення результатів
-      setAnalysisResults(formattedResults);
+      setAnalysisResults({
+        ...formattedResults,
+        sentimentTimeline: sentimentTimeline,
+      });
     } catch (err) {
       console.error("Помилка при виконанні аналізу:", err);
       setError(err.message);
