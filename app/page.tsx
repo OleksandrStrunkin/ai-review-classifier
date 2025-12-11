@@ -4,42 +4,28 @@ import UploadArea from "@/components/UploadArea";
 import ResultsDashboard from "@/components/ResultsDashboard";
 import { useState } from "react";
 import { DUMMY_RESULTS_WITH_ANALYSIS } from "@/data/dummyResults";
+import { AnalysisResults, SentimentMetric, TopicMetric, AnalyzedReview } from "@/types/analysis";
+import groupSentimentByMonth from "@/components/groupSentimentByMonth";
 
-function groupSentimentByMonth(reviews) {
-  const monthlyData = {};
+type FormattedMetrics = {
+  totalReviews: number;
+  positivePercent: string;
+  negativePercent: string; 
+  sentimentData: SentimentMetric[];
+  topicData: TopicMetric[];
+  analyzedReviews: AnalyzedReview[];
+};
 
-  reviews.forEach((review) => {
-    if (!review.review_date) return;
-
-    const monthKey = review.review_date.substring(0, 7);
-    const sentiment = review.sentiment;
-
-    if (!monthlyData[monthKey]) {
-      monthlyData[monthKey] = { Positive: 0, Negative: 0, Neutral: 0 };
-    }
-
-    if (monthlyData[monthKey][sentiment] !== undefined) {
-      monthlyData[monthKey][sentiment]++;
-    }
-  });
-
-  const chartFormat = Object.keys(monthlyData)
-    .sort()
-    .map((monthKey) => ({
-      month: monthKey,
-      ...monthlyData[monthKey],
-    }));
-
-  return chartFormat;
-}
-
+const DUMMY_RESULTS: AnalysisResults =
+  DUMMY_RESULTS_WITH_ANALYSIS as unknown as AnalysisResults;
 
 export default function Home() {
-  const [analysisResults, setAnalysisResults] = useState(null);
+  const [analysisResults, setAnalysisResults] =
+    useState<AnalysisResults | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleAnalyze = async (file) => {
+  const handleAnalyze = async (file: File) => {
     if (!file) return;
 
     setIsLoading(true);
@@ -71,7 +57,7 @@ export default function Home() {
       });
     } catch (err) {
       console.error("Помилка при виконанні аналізу:", err);
-      setError(err.message);
+      setError(err instanceof Error ? err.message : "Невідома помилка");
     } finally {
       setIsLoading(false);
     }
@@ -84,14 +70,16 @@ export default function Home() {
 
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    setAnalysisResults(DUMMY_RESULTS_WITH_ANALYSIS);
+    setAnalysisResults(DUMMY_RESULTS);
     setIsLoading(false);
   };
 
-  const formatGeminiResults = (rawReviews) => {
+  const formatGeminiResults = (
+    rawReviews: AnalyzedReview[]
+  ): FormattedMetrics => {
     const totalReviews = rawReviews.length;
     const sentimentCounts = { Positive: 0, Negative: 0, Neutral: 0, Error: 0 };
-    const topicCounts = {};
+    const topicCounts: Record<string, number> = {};
 
     rawReviews.forEach((review) => {
       let sentiment = review.sentiment || "Error";
@@ -101,7 +89,7 @@ export default function Home() {
       }
 
       if (sentimentCounts.hasOwnProperty(sentiment)) {
-        sentimentCounts[sentiment]++;
+        sentimentCounts[sentiment as keyof typeof sentimentCounts]++;
       } else {
         sentimentCounts["Error"]++;
       }
@@ -132,8 +120,13 @@ export default function Home() {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
+    const positivePercent = ((sentimentCounts["Positive"] / totalReviews) * 100).toFixed(1);
+    const negativePercent = ((sentimentCounts["Negative"] / totalReviews) * 100).toFixed(1);
+
     return {
       totalReviews,
+      positivePercent,
+      negativePercent,
       sentimentData,
       topicData,
       analyzedReviews: rawReviews,
@@ -143,12 +136,9 @@ export default function Home() {
   return (
     <div className="flex min-h-screen justify-center bg-gray-900">
       <main className="w-full max-w-7xl p-8 lg:p-12">
-        {/* ЗАГОЛОВОК */}
         <h1 className="text-4xl font-extrabold mb-8 text-white">
           🤖 AI Фільтр Відгуків
         </h1>
-
-        {/* ОПИС */}
         <p className="text-gray-400 mb-8 max-w-2xl">
           Завантажте ваш CSV-файл із відгуками, і Gemini 2.5 Flash класифікує їх
           (позитивний/негативний), виділить ключові теми скарг та візуалізує
@@ -178,7 +168,6 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-12">
-          {/* ЛІВА КОЛОНКА: Завантаження та Керування */}
           <div className="lg:w-1/3 space-y-8">
             <h2 className="text-2xl font-semibold text-gray-200">
               1. Завантаження даних
@@ -190,35 +179,26 @@ export default function Home() {
               isLoading={isLoading}
             />
           </div>
-
-          {/* ПРАВА КОЛОНКА: Результати та Візуалізація */}
           <div className="lg:w-2/3">
             <h2 className="text-2xl font-semibold text-gray-200 mb-8">
               2. Результати аналізу
             </h2>
-
-            {/* Відображення помилки */}
             {error && (
               <div className="p-4 mb-4 bg-red-900 border border-red-700 text-red-300 rounded-lg">
                 **Помилка:** {error}
               </div>
             )}
-
-            {/* Відображення спінера під час завантаження */}
             {isLoading && (
               <div className="p-8 text-center text-xl text-indigo-400">
                 Аналіз відгуків триває... Це може зайняти до 1 хвилини, залежно
                 від кількості даних.
               </div>
             )}
-
-            {/* Компонент для відображення графіків */}
             {!isLoading && analysisResults ? (
               <ResultsDashboard results={analysisResults} />
             ) : (
               !error &&
               !isLoading && (
-                // *** СТИЛЬ ЗАГЛУШКИ ЗА ВІДСУТНОСТІ РЕЗУЛЬТАТІВ ***
                 <div className="p-8 border border-dashed border-gray-700 bg-gray-800 rounded-lg text-center text-gray-500">
                   <p>
                     Завантажте файл або натисніть "Показати приклад", щоб

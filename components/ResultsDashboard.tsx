@@ -1,15 +1,14 @@
-import React from "react";
 import SentimentChart from "./charts/SentimentChart";
 import TopicChart from "./charts/TopicChart";
 import ReviewTable from "./ReviewTable";
 import SentimentTimelineChart from "./charts/SentimentTimelineChart";
+import { AnalysisResults } from "@/types/analysis";
 
-/**
- * Головна панель для відображення результатів аналізу.
- * @param {object} props
- * @param {object} props.results - Об'єкт із результатами аналізу (DUMMY_RESULTS).
- */
-export default function ResultsDashboard({ results }) {
+type ResultsDashboardProps = {
+  results: AnalysisResults | null;
+};
+
+export default function ResultsDashboard({ results }: ResultsDashboardProps) {
   if (!results) {
     return null;
   }

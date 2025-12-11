@@ -23,7 +23,6 @@ const responseSchema = {
 };
 
 export async function POST(request) {
-
   if (!process.env.GEMINI_API_KEY) {
     return new Response(
       JSON.stringify({ error: "Gemini API Key не налаштовано." }),
@@ -53,6 +52,14 @@ export async function POST(request) {
 
     const reviews = await parseCsv(buffer);
 
+    const normalizedReviews = reviews.map((review) => {
+      return {
+        review_id: review._0 || review.review_id,
+        review_date: review._1 || review.review_date,
+        original_text: review.original_text || review._2,
+      };
+    });
+
     if (reviews.length === 0) {
       return new Response(
         JSON.stringify({
@@ -65,10 +72,9 @@ export async function POST(request) {
       );
     }
 
-    const analysisPromises = reviews.map((review) =>
+    const analysisPromises = normalizedReviews.map((review) =>
       analyzeReviewWithGemini(review)
     );
-
 
     const analyzedReviews = await Promise.all(analysisPromises);
 

@@ -1,12 +1,5 @@
 import { useState } from "react";
 
-/**
- * Компонент для завантаження файлу CSV та запуску аналізу.
- * @param {object} props
- * @param {function} props.onAnalyze - Функція, яка викликається при натисканні 'Запустити аналіз'.
- * @param {boolean} props.isLoading - Індикатор, чи триває аналіз.
- */
-
 export default function UploadArea({ onAnalyze, isLoading, onShowExample }) {
   const [selectedFile, setSelectedFile] = useState(null);
 
