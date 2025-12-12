@@ -1,27 +1,7 @@
-import { GoogleGenAI } from "@google/genai";
-import csv from "csv-parser";
 import { NextResponse } from "next/server";
-import { Readable } from "stream";
 
-const ai = new GoogleGenAI({});
-
-const MODEL_NAME = "gemini-2.5-flash";
-
-const responseSchema = {
-  type: "object",
-  properties: {
-    sentiment: {
-      type: "string",
-      description: "Класифікація настрою: Positive, Negative, або Neutral.",
-    },
-    topic: {
-      type: "string",
-      description:
-        "Основна тема відгуку/скарги. Використовуйте терміни: Доставка, Якість, Ціна, Підтримка, Інше.",
-    },
-  },
-  required: ["sentiment", "topic"],
-};
+import { parseCsv } from "@/lib/csv-parser";
+import { analyzeReviewWithGemini } from "@/lib/gemini-analysis";
 
 export async function POST(request: NextResponse) {
   if (!process.env.GEMINI_API_KEY) {
@@ -36,17 +16,18 @@ export async function POST(request: NextResponse) {
 
   try {
     const formData = await request.formData();
-    const file = formData.get("file");
+    const fileEntry = formData.get("file");
 
-    if (!file) {
-      return new Response(
-        JSON.stringify({ error: "Файл не знайдено у запиті." }),
+    if (!fileEntry || !(fileEntry instanceof Blob)) {
+      return NextResponse.json(
         {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+          error:
+            "Файл не знайдено або він має некоректний формат (очікується Blob/File).",
+        },
+        { status: 400 }
       );
     }
+    const file = fileEntry;
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
@@ -91,103 +72,17 @@ export async function POST(request: NextResponse) {
     );
   } catch (error) {
     console.error("Помилка під час обробки запиту:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Невідома помилка на сервері.";
     return new Response(
       JSON.stringify({
         error: "Виникла внутрішня помилка сервера.",
-        details: error.message,
+        details: errorMessage,
       }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
       }
     );
-  }
-}
-
-// Допоміжна функція для парсингу CSV
-function parseCsv(buffer) {
-  return new Promise((resolve, reject) => {
-    const results = [];
-
-    Readable.from(buffer)
-      .pipe(
-        csv({
-          trim: true,
-          headers: true,
-        })
-      )
-      .on("data", (data) => {
-        let reviewText = "";
-
-        reviewText = (data.review_text || data.text || "").trim();
-
-        if (!reviewText) {
-          const keys = Object.keys(data);
-          let bestMatch = "";
-          keys.forEach((key) => {
-            const value = (data[key] || "").trim();
-            if (
-              value.length > bestMatch.length &&
-              !key.toLowerCase().includes("id")
-            ) {
-              bestMatch = value;
-            }
-          });
-          reviewText = bestMatch;
-        }
-
-        if (
-          reviewText &&
-          reviewText.length > 10 &&
-          !reviewText.toLowerCase().includes("review")
-        ) {
-          results.push({
-            original_text: reviewText,
-            ...data,
-          });
-        }
-      })
-      .on("end", () => {
-        console.log(results);
-        resolve(results);
-      })
-      .on("error", (err) => {
-        reject(err);
-      });
-  });
-}
-
-async function analyzeReviewWithGemini(review) {
-  try {
-    const prompt = `Проаналізуй наступний відгук українською мовою: "${review.original_text}". Поверни лише JSON-об'єкт, який містить класифікацію настрою (Positive, Negative, Neutral) та основну тему, використовуючи лише терміни: Доставка, Якість, Ціна, Підтримка, Інше.`;
-
-    const response = await ai.models.generateContent({
-      model: MODEL_NAME,
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: responseSchema,
-        temperature: 0.1,
-      },
-    });
-
-    const analysis = JSON.parse(response.text);
-
-    return {
-      ...review,
-      review_date: review.review_date,
-      sentiment: analysis.sentiment,
-      topic: analysis.topic,
-    };
-  } catch (e) {
-    console.error(
-      `Помилка аналізу відгуку: ${review.original_text}`,
-      e.message
-    );
-    return {
-      ...review,
-      sentiment: "Error",
-      topic: "Error",
-    };
   }
 }

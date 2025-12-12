@@ -6,6 +6,18 @@ export type AnalyzedReview = {
   topic: "Доставка" | "Якість" | "Ціна" | "Підтримка" | "Інше" | string;
 };
 
+export type NormalizedReview = {
+  review_id: string;
+  review_date: string;
+  original_text: string;
+  [key: string]: any;
+};
+
+export type GeminiAnalysisResult = {
+  sentiment: "Positive" | "Negative" | "Neutral";
+  topic: "Доставка" | "Якість" | "Ціна" | "Підтримка" | "Інше";
+};
+
 export type SentimentMetric = {
   label: string;
   value: number;
