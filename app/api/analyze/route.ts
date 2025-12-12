@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import csv from "csv-parser";
+import { NextResponse } from "next/server";
 import { Readable } from "stream";
 
 const ai = new GoogleGenAI({});
@@ -22,7 +23,7 @@ const responseSchema = {
   required: ["sentiment", "topic"],
 };
 
-export async function POST(request) {
+export async function POST(request: NextResponse) {
   if (!process.env.GEMINI_API_KEY) {
     return new Response(
       JSON.stringify({ error: "Gemini API Key не налаштовано." }),

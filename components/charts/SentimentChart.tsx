@@ -1,11 +1,14 @@
-
-import React from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { SentimentMetric } from "@/types/analysis";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function SentimentChart({ data }) {
+type SentimentChartProps = {
+  data: SentimentMetric[];
+};
+
+export default function SentimentChart({ data }: SentimentChartProps) {
   const chartData = {
     labels: data.map((d) => d.label),
     datasets: [
@@ -17,24 +20,26 @@ export default function SentimentChart({ data }) {
     ],
   };
 
-
   const options = {
     responsive: true,
     plugins: {
       legend: {
-        position: "bottom",
+        position: "bottom" as const,
         labels: {
           color: "#A0AEC0",
         },
       },
       tooltip: {
         callbacks: {
-          label: function (context) {
+          label: function (context: any) {
             let label = context.label || "";
             if (label) {
               label += ": ";
             }
-            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const total = context.dataset.data.reduce(
+              (a: number, b: number) => a + b,
+              0
+            );
             const value = context.parsed;
             const percentage = ((value / total) * 100).toFixed(1) + "%";
             return label + value + " (" + percentage + ")";

@@ -1,10 +1,15 @@
 import { useState } from "react";
+import { UploadAreaProps } from "@/types/analysis";
 
-export default function UploadArea({ onAnalyze, isLoading, onShowExample }) {
-  const [selectedFile, setSelectedFile] = useState(null);
+export default function UploadArea({
+  onAnalyze,
+  isLoading,
+  onShowExample,
+}: UploadAreaProps) {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file && file.name.endsWith(".csv")) {
       setSelectedFile(file);
     } else {
@@ -23,7 +28,6 @@ export default function UploadArea({ onAnalyze, isLoading, onShowExample }) {
 
   return (
     <div className="p-6 bg-gray-800 rounded-xl shadow-2xl shadow-gray-900/50 border border-gray-700 space-y-5">
-      {/* 1. Поле для завантаження файлу */}
       <div className="border border-dashed border-gray-600 rounded-lg p-5 text-center transition-colors duration-200 hover:border-indigo-400">
         <label className="block text-sm font-medium text-gray-300 cursor-pointer">
           <span className="mb-2 block">Виберіть CSV-файл із відгуками</span>
@@ -34,23 +38,17 @@ export default function UploadArea({ onAnalyze, isLoading, onShowExample }) {
             onChange={handleFileChange}
             className="hidden"
           />
-
-          {/* Візуальний індикатор вибору файлу */}
           <div className="inline-flex items-center justify-center px-4 py-2 bg-indigo-900/50 border border-indigo-700 text-sm font-medium rounded-full text-indigo-300 hover:bg-indigo-900 transition-colors duration-200">
             {selectedFile ? "Файл вибрано (Змінити)" : "Обрати файл (.csv)"}
           </div>
         </label>
       </div>
-
-      {/* 2. Індикатор вибраного файлу */}
       {selectedFile && (
         <p className="mt-2 text-sm text-gray-400">
           **Вибрано:** **{selectedFile.name}** (
           {Math.round(selectedFile.size / 1024)} KB)
         </p>
       )}
-
-      {/* 3. Кнопка для запуску аналізу */}
       <button
         onClick={handleSubmit}
         disabled={!selectedFile || isLoading}
@@ -91,11 +89,7 @@ export default function UploadArea({ onAnalyze, isLoading, onShowExample }) {
           "Запустити аналіз"
         )}
       </button>
-
-      {/* Роздільник */}
       <div className="text-center text-gray-600 text-sm py-1">— або —</div>
-
-      {/* Кнопка демонстрації (Вторинна дія) */}
       <button
         onClick={onShowExample}
         disabled={isLoading}

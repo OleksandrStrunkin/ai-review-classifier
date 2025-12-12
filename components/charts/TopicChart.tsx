@@ -8,6 +8,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { TopicMetric } from "@/types/analysis";
 
 ChartJS.register(
   CategoryScale,
@@ -18,7 +19,11 @@ ChartJS.register(
   Legend
 );
 
-export default function TopicChart({ data }) {
+type TopicChartProps = {
+  data: TopicMetric[];
+};
+
+export default function TopicChart({ data }: TopicChartProps) {
   const INDIGO_COLOR = "rgba(109, 40, 217, 0.8)";
   const INDIGO_BORDER = "rgba(109, 40, 217, 1)";
   const TEXT_COLOR = "#A0AEC0";
@@ -39,7 +44,7 @@ export default function TopicChart({ data }) {
   };
 
   const options = {
-    indexAxis: "y",
+    indexAxis: "y" as const,
     responsive: true,
     plugins: {
       legend: {

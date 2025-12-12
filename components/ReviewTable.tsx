@@ -1,10 +1,15 @@
+import { AnalysisResults } from "@/types/analysis";
 
-
-export default function ReviewTable({ reviews }) {
+export default function ReviewTable({
+  reviews,
+}: {
+  reviews: AnalysisResults["analyzedReviews"];
+}) {
   if (!reviews || reviews.length === 0) return null;
 
-  // Функція для визначення кольору на основі настрою
-  const getSentimentStyle = (sentiment) => {
+  type SentimentType = "positive" | "negative" | "neutral" | "Error";
+
+  const getSentimentStyle = (sentiment: SentimentType): string => {
     switch (sentiment.toLowerCase()) {
       case "positive":
         return "bg-emerald-500 text-white";
@@ -17,7 +22,6 @@ export default function ReviewTable({ reviews }) {
     }
   };
 
-  // Припускаємо, що reviews — це масив об'єктів, кожен з яких має {original_text, sentiment, topic}
   return (
     <div className="overflow-x-auto rounded-lg shadow-md">
       <table className="min-w-full divide-y divide-gray-700 dark:divide-gray-700">
@@ -46,7 +50,8 @@ export default function ReviewTable({ reviews }) {
               <td className="px-6 py-4 whitespace-nowrap text-sm">
                 <span
                   className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getSentimentStyle(
-                    review.sentiment || "Error"
+                    (review.sentiment?.toLowerCase() ||
+                      "error") as SentimentType
                   )}`}
                 >
                   {review.sentiment || "Error"}

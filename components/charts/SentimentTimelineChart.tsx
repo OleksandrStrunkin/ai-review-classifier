@@ -9,6 +9,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { SentimentTimelinePoint } from "@/types/analysis";
 
 ChartJS.register(
   CategoryScale,
@@ -20,7 +21,11 @@ ChartJS.register(
   Legend
 );
 
-export default function SentimentTimelineChart({ data }) {
+type SentimentTimelineChartProps = {
+  data: SentimentTimelinePoint[];
+};
+
+export default function SentimentTimelineChart({ data }: SentimentTimelineChartProps) {
   const TEXT_COLOR = "#A0AEC0";
   const GRID_COLOR = "rgba(55, 65, 81, 0.5)";
   const POSITIVE_COLOR = "rgba(16, 185, 129, 1)";
@@ -61,7 +66,7 @@ export default function SentimentTimelineChart({ data }) {
     responsive: true,
     plugins: {
       legend: {
-        position: "top",
+        position: "top" as const,
         labels: {
           color: TEXT_COLOR,
           font: {
