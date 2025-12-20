@@ -5,7 +5,7 @@ import { analyzeReviewWithGemini } from "@/lib/gemini-analysis";
 
 export async function POST(request: NextRequest) {
   if (!process.env.GEMINI_API_KEY) {
-    return new Response(
+    return NextResponse.json(
       JSON.stringify({ error: "Gemini API Key не налаштовано." }),
       {
         status: 500,
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     console.error("Помилка під час обробки запиту:", error);
     const errorMessage =
       error instanceof Error ? error.message : "Невідома помилка на сервері.";
-    return new Response(
+    return NextResponse.json(
       JSON.stringify({
         error: "Виникла внутрішня помилка сервера.",
         details: errorMessage,
