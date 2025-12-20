@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📊 AI Feedback Analyzer
 
-## Getting Started
+A modern web application designed for intelligent customer feedback analysis.
+The system leverages Artificial Intelligence to perform sentiment analysis, identify key topics, and visualize insights in real-time.
 
-First, run the development server:
+## ✨ Features
 
-```bash
+- AI-Powered Sentiment Analysis — Automatically categorizes reviews into Positive, Negative, or Neutral.
+- Topic Extraction — Identifies primary themes mentioned by users (e.g., Quality, Pricing, Service).
+- Interactive Dashboards — Data visualization using line charts, bar charts, and doughnut charts.
+- Trend Tracking — Monitors changes in user sentiment over time with a monthly timeline.
+- Professional PDF Export — Generates high-quality analytical reports in a single click.
+- Full Responsiveness — Optimized UI for desktops, tablets, and smartphones.
+
+## 🛠 Tech Stack
+
+- Frontend: Next.js 15+ (App Router, TypeScript)
+- Styling: Tailwind CSS v4
+- Visualizations: Chart.js & react-chartjs-2
+- PDF Generation: jsPDF & html-to-image
+- AI Engine: LLM Integration via Next.js API Routes
+
+## 🚀 Getting Started
+
+1. Clone the repository
+
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
+
+2. Install dependencies
+
+npm install
+
+3. Configure Environment Variables
+
+Create a .env.local file in the root directory and add your API key:
+
+OPENAI_API_KEY=your_api_key_here
+
+4. Run the development server
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+📱 Mobile Optimization
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The project follows a mobile-first design approach:
 
-## Learn More
+- KPI Cards — Adaptive grid (1 column on mobile, 3 columns on desktop)
+- Charts — Responsive scaling with optimized font sizes and touch-friendly tooltips
+- Review Table — Automatically transforms into a card-based layout on small screens
+- Pagination — Includes a Show More feature for large datasets on mobile devices
 
-To learn more about Next.js, take a look at the following resources:
+📂 Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+/app        — Next.js pages and API routes
+/components — Reusable React components (Charts, ReviewTable, KPICard)
+/lib        — Helper functions (PDF export logic, analysis utilities)
+/types      — TypeScript interfaces and type definitions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+📄 Exporting Reports
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+PDF export is powered by html-to-image, ensuring full compatibility with modern CSS features such as oklch and oklab provided by Tailwind CSS v4.
