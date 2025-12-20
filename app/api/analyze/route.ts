@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 import { parseCsv } from "@/lib/csv-parser";
 import { analyzeReviewWithGemini } from "@/lib/gemini-analysis";
 
-export async function POST(request: NextResponse) {
+export async function POST(request: NextRequest) {
   if (!process.env.GEMINI_API_KEY) {
     return new Response(
       JSON.stringify({ error: "Gemini API Key не налаштовано." }),
