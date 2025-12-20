@@ -135,7 +135,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen justify-center bg-gray-900">
-      <main className="w-full max-w-7xl p-8 lg:p-12">
+      <main className="w-full max-w-7xl p-4 lg:p-12">
         <h1 className="text-4xl font-extrabold mb-8 text-white">
           🤖 AI Фільтр Відгуків
         </h1>

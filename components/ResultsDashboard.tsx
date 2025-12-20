@@ -34,7 +34,6 @@ export default function ResultsDashboard({ results }: ResultsDashboardProps) {
 
   return (
     <div className="space-y-6">
-      {/* Блок з кнопкою зверху */}
       <div className="flex justify-end">
         <button
           onClick={handleDownload}
@@ -56,11 +55,8 @@ export default function ResultsDashboard({ results }: ResultsDashboardProps) {
           )}
         </button>
       </div>
-      <div
-        id="analysis-report"
-        className="space-y-10 p-4 bg-gray-900 rounded-2xl"
-      >
-        <div className="grid grid-cols-3 gap-6">
+      <div id="analysis-report" className="space-y-10 bg-gray-900 rounded-2xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           <KPICard
             title="Всього відгуків"
             value={totalReviews}
@@ -73,28 +69,30 @@ export default function ResultsDashboard({ results }: ResultsDashboardProps) {
             icon="👍"
             bgColor="bg-emerald-900/40 border border-emerald-700/50"
           />
-          <KPICard
-            title="Негативних"
-            value={`${negativePercent}%`}
-            icon="👎"
-            bgColor="bg-red-900/40 border border-red-700/50"
-          />
+          <div className="sm:col-span-2 lg:col-span-1">
+            <KPICard
+              title="Негативних"
+              value={`${negativePercent}%`}
+              icon="👎"
+              bgColor="bg-red-900/40 border border-red-700/50"
+            />
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="p-6 bg-gray-800 flex flex-col justify-center items-center rounded-xl border border-gray-700">
+          <div className="p-3 md:p-6 bg-gray-800 flex flex-col justify-center items-center rounded-xl border border-gray-700">
             <h3 className="text-xl font-semibold mb-6 text-gray-100">
               Розподіл настроїв
             </h3>
             <SentimentChart data={sentimentData} />
           </div>
-          <div className="p-6 bg-gray-800 rounded-xl border border-gray-700">
+          <div className="p-3 md:p-6 bg-gray-800 rounded-xl border border-gray-700">
             <h3 className="text-xl font-semibold mb-6 text-gray-100">
               Топ-5 тем відгуків
             </h3>
             <TopicChart data={topicData} />
           </div>
         </div>
-        <div className="p-6 bg-gray-800 rounded-xl border border-gray-700">
+        <div className="p-3 md:p-6 bg-gray-800 rounded-xl border border-gray-700">
           <h3 className="text-xl font-semibold mb-6 text-gray-100">
             Динаміка настроїв з часом
           </h3>

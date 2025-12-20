@@ -38,7 +38,7 @@ export default function TopicChart({ data }: TopicChartProps) {
         backgroundColor: INDIGO_COLOR,
         borderColor: INDIGO_BORDER,
         borderWidth: 1,
-        borderRadius: 4,
+        borderRadius: 6,
       },
     ],
   };
@@ -46,12 +46,14 @@ export default function TopicChart({ data }: TopicChartProps) {
   const options = {
     indexAxis: "y" as const,
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: false,
       },
-      title: {
-        display: false,
+      tooltip: {
+        padding: 10,
+        bodyFont: { size: 14 },
       },
     },
     scales: {
@@ -59,13 +61,12 @@ export default function TopicChart({ data }: TopicChartProps) {
         beginAtZero: true,
         grid: {
           color: GRID_COLOR,
-          borderColor: GRID_COLOR,
+          drawBorder: false,
         },
         ticks: {
           color: TEXT_COLOR,
-          font: {
-            family: "system-ui",
-          },
+          font: { size: 11 },
+          maxTicksLimit: 6,
         },
       },
       y: {
@@ -75,7 +76,22 @@ export default function TopicChart({ data }: TopicChartProps) {
         ticks: {
           color: TEXT_COLOR,
           font: {
+            size:
+              typeof window !== "undefined" && window.innerWidth < 768
+                ? 11
+                : 13,
             family: "system-ui",
+          },
+          callback: function (value: any, index: number) {
+            const label = data[index].topic;
+            if (
+              typeof window !== "undefined" &&
+              window.innerWidth < 768 &&
+              label.length > 12
+            ) {
+              return label.substring(0, 10) + "...";
+            }
+            return label;
           },
         },
       },
@@ -83,7 +99,7 @@ export default function TopicChart({ data }: TopicChartProps) {
   };
 
   return (
-    <div className="h-64">
+    <div className="h-[350px] md:h-80 w-full">
       <Bar data={chartData} options={options} />
     </div>
   );

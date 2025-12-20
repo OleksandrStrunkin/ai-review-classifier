@@ -64,42 +64,47 @@ export default function SentimentTimelineChart({ data }: SentimentTimelineChartP
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top" as const,
         labels: {
           color: TEXT_COLOR,
+          usePointStyle: true,
+          padding: 20,
           font: {
-            size: 14,
+            size:
+              typeof window !== "undefined" && window.innerWidth < 768
+                ? 10
+                : 12,
           },
         },
+      },
+      tooltip: {
+        mode: "index" as const,
+        intersect: false,
       },
     },
     scales: {
       x: {
-        title: {
-          display: true,
-          color: TEXT_COLOR,
-        },
-        grid: {
-          color: GRID_COLOR,
-          borderColor: GRID_COLOR,
-        },
+        grid: { color: GRID_COLOR },
         ticks: {
           color: TEXT_COLOR,
+          maxRotation: 45,
+          minRotation: 45,
+          font: { size: 10 },
         },
       },
       y: {
-        title: {
-          display: true,
-          text: "Кількість відгуків",
-          color: TEXT_COLOR,
-        },
         beginAtZero: true,
-        grid: {
-          color: GRID_COLOR,
-        },
+        grid: { color: GRID_COLOR },
         ticks: {
+          color: TEXT_COLOR,
+          font: { size: 10 },
+        },
+        title: {
+          display: typeof window !== "undefined" && window.innerWidth > 768, // Ховаємо заголовок осі на мобільних для економії місця
+          text: "Кількість",
           color: TEXT_COLOR,
         },
       },
@@ -107,7 +112,7 @@ export default function SentimentTimelineChart({ data }: SentimentTimelineChartP
   };
 
   return (
-    <div className="h-96">
+    <div className="h-[300px] md:h-[400px] w-full">
       <Line data={chartData} options={options} />
     </div>
   );
